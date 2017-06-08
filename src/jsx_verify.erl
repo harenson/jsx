@@ -27,7 +27,11 @@
 -export([init/1, handle_event/2]).
 
 
--spec is_json(Source::binary(), Config::jsx_config:config()) -> true | false | {incomplete, jsx:decoder()}.
+-type config() :: list().
+-export_type([config/0]).
+
+
+-spec is_json(Source::binary(), Config::config()) -> true | false | {incomplete, jsx:decoder()}.
 
 is_json(Source, Config) when is_list(Config) ->
     try (jsx:decoder(?MODULE, Config, jsx_config:extract_config(Config)))(Source)
@@ -35,7 +39,7 @@ is_json(Source, Config) when is_list(Config) ->
     end.
 
 
--spec is_term(Source::any(), Config::jsx_config:config()) -> true | false | {incomplete, jsx:encoder()}.
+-spec is_term(Source::any(), Config::config()) -> true | false | {incomplete, jsx:encoder()}.
 
 is_term(Source, Config) when is_list(Config) ->
     try (jsx:encoder(?MODULE, Config, jsx_config:extract_config(Config)))(Source)
