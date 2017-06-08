@@ -755,9 +755,9 @@ unescape(<<$u, F, A, B, C, ?rsolidus, $u, G, X, Y, Z, Rest/binary>>, Handler, Ac
     Low = erlang:list_to_integer([$d, X, Y, Z], 16),
     Codepoint = (High - 16#d800) * 16#400 + (Low - 16#dc00) + 16#10000,
     string(Rest, Handler, [Acc, <<Codepoint/utf8>>], Stack, Config);
-unescape(<<$u, F, A, B, C, ?rsolidus, $u, W, X, Y, Z, Rest/binary>>, Handler, Acc, Stack, Config)
+unescape(<<$u, D, A, B, C, ?rsolidus, $u, W, X, Y, Z, Rest/binary>>, Handler, Acc, Stack, Config)
         when (A == $8 orelse A == $9 orelse A == $a orelse A == $b orelse A == $A orelse A == $B),
-            (F == $d orelse F == $D),
+            (D == $d orelse D == $D),
             ?is_hex(B), ?is_hex(C), ?is_hex(W), ?is_hex(X), ?is_hex(Y), ?is_hex(Z)
         ->
     case Config#config.strict_utf8 of
@@ -1970,6 +1970,24 @@ return_tail_test_() ->
                 {incomplete, F} = jsx:decode(<<"{">>, [return_tail, stream]),
                 F(<<"}">>)
             end
+        )}
+    ].
+
+front_backslash_test_() ->
+    [
+        {"front_backslash with front backslash", ?_assertEqual(
+            ok,
+            jsx:decode(<<"{\"", 16#5c, "udabc", 16#5c, "u0000\":false}">>,
+                       [strict,
+                        return_maps,
+                        {error_handler, fun jsx_config:fake_error_handler/3}])
+        )},
+        {"front_backslash without front backslash", ?_assertEqual(
+            #{<<117,100,97,98,99,0>> => false},
+            jsx:decode(<<"{\"udabc", 16#5c, "u0000\":false}">>,
+                       [strict,
+                        return_maps,
+                        {error_handler, fun jsx_config:fake_error_handler/3}])
         )}
     ].
 

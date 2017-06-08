@@ -36,9 +36,9 @@
 -type handler_type(Handler) ::
     fun((jsx:json_text() | end_stream |
          jsx:json_term(),
-         {decoder, any(), module(), null | list(), list()} |
-         {parser, any(), module(), list()} |
-         {encoder, any(), module()},
+         {decoder, any(), {module(), any()}, null | list(), list()} |
+         {parser, any(), {module(), any()}, list()} |
+         {encoder, any(), {module(), any()}},
          list({pre_encode, fun((any()) -> any())} |
               {error_handler, Handler} |
               {incomplete_handler, Handler} |

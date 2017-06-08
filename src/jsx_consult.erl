@@ -81,17 +81,17 @@ consult(File, Config) when is_list(Config) ->
 
 
 -type state() :: {list(), #config{}}.
--spec init(Config::proplists:proplist()) -> state().
+-spec init(Config::proplists:proplist()) -> {[], proplists:proplist(), state()}.
 
 init(Config) -> {[], Config, jsx_to_term:start_term(Config)}.
 
 
--spec reset(State::state()) -> state().
+-spec reset(State::{list(), proplists:proplist(), any()}) -> {list(), proplists:proplist(), state()}.
 
 reset({Acc, Config, _}) -> {Acc, Config, jsx_to_term:start_term(Config)}.
 
 
--spec handle_event(Event::any(), State::state()) -> state().
+-spec handle_event(Event::any(), State::{list(), #config{}, state()}) -> {list(), #config{}, state()}.
 
 handle_event(end_json, {Acc, Config, State}) ->
     {[jsx_to_term:get_value(State)] ++ Acc, Config, State};
